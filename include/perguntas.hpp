@@ -12,6 +12,5 @@ struct Pergunta {
 };
 
 Pergunta obterPerguntaAleatoria();
-bool fazerPergunta(const Pergunta& p);
 
 #endif

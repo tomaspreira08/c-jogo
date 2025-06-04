@@ -105,34 +105,4 @@ Pergunta obterPerguntaAleatoria() {
     return p;
 }
 
-bool fazerPergunta(const Pergunta& p) {
-    std::cout << p.texto << "\n";
-    char opc = 'A';
-    for (const auto& o : p.opcoes) {
-        std::cout << opc << ") " << o << "\n";
-        opc++;
-    }
 
-    char resposta;
-    std::cout << "Escolha uma opção: ";
-    std::cin >> resposta;
-
-    // Converte a resposta para maiúscula para evitar problemas de case
-    resposta = toupper(resposta);
-
-    // Verifica se a resposta escolhida é válida
-    if (resposta < 'A' || resposta >= 'A' + p.opcoes.size()) {
-        std::cout << "Opção inválida! Tente novamente.\n";
-        return false; // Retorna falso se a opção for inválida
-    }
-
-    // Verifica se a resposta escolhida é a correta
-    char respostaCorreta = p.correta; // A letra da resposta correta
-    if (resposta == respostaCorreta) {
-        std::cout << "Correto!\n";
-        return true; // Retorna verdadeiro se a resposta estiver correta
-    } else {
-        std::cout << "Errado! A resposta correta era: " << respostaCorreta << "\n";
-        return false; // Retorna falso se a resposta estiver errada
-    }
-}

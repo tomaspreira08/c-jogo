@@ -9,9 +9,6 @@ struct Corredor {
     int posicao = 0;
 };
 
-void mostrarCorrida(const std::vector<Corredor>& corredores, int meta);
-void animarMovimento(Corredor& jogador, int dado);
-void turnoJogador(Corredor& jogador);
-void animarChegada(const Corredor& jogador, int meta);
+
 
 #endif

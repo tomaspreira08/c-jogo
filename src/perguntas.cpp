@@ -28,7 +28,7 @@ Pergunta obterPerguntaAleatoria() {
         {"Qual é a cor do Dodge Charger de Dom?", {"Preto", "Vermelho", "Azul", "Branco"}, 'A'},
         {"Qual personagem se casa com Mia?", {"Brian", "Dom", "Roman", "Tej"}, 'A'},
         {"Qual é o carro que aparece na corrida de abertura de Velocidade Furiosa 6?", {"Ford Mustang Shelby GT500", "Dodge Charger", "Toyota Supra", "Mazda RX-7"}, 'A'},
-        {"Qual personagem é conhecido pelo seu senso de humor?", {"Roman", "Tej", "Brian", "Dom"}, 'A'},
+        {"Qual personagem é conhecido pelo seu senso de ?", {"Roman", "Tej", "Brian", "Dom"}, 'A'},
         {"Qual é a primeira corrida ilegal mostrada no filme original?", {"Corrida na rua de Los Angeles", "Corrida no porto", "Corrida em Tóquio", "Corrida em Miami"}, 'A'},
         {"Quem é o líder da equipe principal em Velocidade Furiosa?", {"Dom", "Brian", "Deckard", "Roman"}, 'A'},
         {"Qual é o carro mais famoso de Dom Toretto?", {"Dodge Charger", "Toyota Supra", "Nissan Skyline", "Chevrolet Camaro"}, 'A'},
@@ -46,7 +46,7 @@ Pergunta obterPerguntaAleatoria() {
         {"Qual é o nome do filho de Dom?", {"Brian", "Jack", "Roman", "Tej"}, 'B'},
         {"Quem traiu a equipe em Velocidade Furiosa 7?", {"Deckard Shaw", "Owen Shaw", "Cipher", "Letty"}, 'A'},
         {"Qual personagem é especialista em hackear?", {"Tej", "Roman", "Brian", "Dom"}, 'A'},
-        {"Qual é o nome do spin-off focado em personagens femininas?", {"Hobbs & Shaw", "Fast Girls", "Velocity Women", "Fast & Fierce"}, 'A'},
+        {"Qual é o nome do spin-off focado em personagens ?", {"Hobbs & Shaw", "Fast Girls", "Velocity Women", "Fast & Fierce"}, 'A'},
         {"Em qual filme a equipe invade um trem para roubar um computador?", {"Velocidade Furiosa 7", "Velocidade Furiosa 6", "Velocidade Furiosa 5", "Velocidade Furiosa 4"}, 'B'},
         {"Que carro Letty costuma pilotar?", {"Dodge Charger", "Nissan Skyline", "Ford Mustang", "Toyota Supra"}, 'A'},
         {"Quem é o antagonista principal de Velocidade Furiosa 8?", {"Cipher", "Deckard Shaw", "Owen Shaw", "Jakob Toretto"}, 'A'},
@@ -84,22 +84,25 @@ Pergunta obterPerguntaAleatoria() {
         {"Quem é o personagem que pilota o Lykan Hypersport?", {"Dom", "Brian", "Roman", "Tej"}, 'A'}
     };
 
-    // Seleciona uma pergunta aleatória
+ // Seleciona uma pergunta aleatória
     Pergunta p = perguntas[rand() % perguntas.size()];
 
+    // Salva o texto da resposta correta antes de embaralhar
+    std::string respostaCorretaTexto = p.opcoes[p.correta - 'A'];
+
     // Embaralha as opções
-    std::vector<std::string> opcoes = p.opcoes;
-    
-    // Usando std::shuffle
-    std::random_device rd; // Obter um gerador de números aleatórios
-    std::mt19937 g(rd());  // Inicializa o gerador com um valor aleatório
-    std::shuffle(opcoes.begin(), opcoes.end(), g); // Embaralha as opções
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(p.opcoes.begin(), p.opcoes.end(), g);
+
+    // Descobre a nova posição da resposta correta
+    auto it = std::find(p.opcoes.begin(), p.opcoes.end(), respostaCorretaTexto);
+    char novaLetraCorreta = 'A' + std::distance(p.opcoes.begin(), it);
 
     // Atualiza a letra da resposta correta
-    char respostaCorreta = 'A' + std::distance(opcoes.begin(), std::find(opcoes.begin(), opcoes.end(), p.opcoes[0]));
+    p.correta = novaLetraCorreta;
 
-    // Retorna a pergunta com as opções embaralhadas e a resposta correta
-    return {p.texto, opcoes, respostaCorreta};
+    return p;
 }
 
 bool fazerPergunta(const Pergunta& p) {
@@ -110,6 +113,26 @@ bool fazerPergunta(const Pergunta& p) {
         opc++;
     }
 
-    char resposta = lerResposta();
-    return resposta == p.correta;
+    char resposta;
+    std::cout << "Escolha uma opção: ";
+    std::cin >> resposta;
+
+    // Converte a resposta para maiúscula para evitar problemas de case
+    resposta = toupper(resposta);
+
+    // Verifica se a resposta escolhida é válida
+    if (resposta < 'A' || resposta >= 'A' + p.opcoes.size()) {
+        std::cout << "Opção inválida! Tente novamente.\n";
+        return false; // Retorna falso se a opção for inválida
+    }
+
+    // Verifica se a resposta escolhida é a correta
+    char respostaCorreta = p.correta; // A letra da resposta correta
+    if (resposta == respostaCorreta) {
+        std::cout << "Correto!\n";
+        return true; // Retorna verdadeiro se a resposta estiver correta
+    } else {
+        std::cout << "Errado! A resposta correta era: " << respostaCorreta << "\n";
+        return false; // Retorna falso se a resposta estiver errada
+    }
 }

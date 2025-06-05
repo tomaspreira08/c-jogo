@@ -1,11 +1,43 @@
-#include <QApplication>            // Inclui a classe principal da aplicação Qt
-#include "../include/minhajogojanela.hpp" // Inclui o cabeçalho da sua nova janela
+#include <iostream>
+#include <vector>
+#include "../include/jogo.hpp"
+#include "../include/utils.hpp"
+#include "../include/perguntas.hpp" // necessário para inicializar perguntas
 
-int main(int argc, char *argv[]) {
-    QApplication a(argc, argv); // Cria o objeto que gerencia a aplicação Qt (essencial!)
+int main() {
+    std::vector<Corredor> jogadores = {
+        {"Dom  ", 0},
+        {"Brian", 0}
+    };
 
-    MinhaJogoJanela w;          // Cria uma instância da sua janela de jogo
-    w.show();                   // Mostra a janela na tela
+    const int META = 30;
+    bool terminou = false;
 
-    return a.exec();            // Inicia o "loop de eventos" do Qt. Seu programa fica rodando aqui até a janela ser fechada.
+    // Inicializa perguntas embaralhadas
+    inicializarPerguntas();
+
+    std::cout << "\n🏁 VELOCIDADE FURIOSA - CORRIDA NO TERMINAL 🏁\n\n";
+
+    while (!terminou) {
+        for (auto& jogador : jogadores) {
+            limparEcra();
+            mostrarCorrida(jogadores, META);
+            turnoJogador(jogador);
+
+            if (jogador.posicao >= META) {
+                terminou = true;
+                animarChegada(jogador, META);
+                break;
+            }
+        }
+    }
+
+    Corredor* vencedor = &jogadores[0];
+    for (auto& j : jogadores) {
+        if (j.posicao > vencedor->posicao)
+            vencedor = &j;
+    }
+
+    std::cout << "\n🏆 VENCEDOR: " << vencedor->nome << " 🎉🎉🎉";
+    return 0;
 }

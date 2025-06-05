@@ -2,17 +2,20 @@
 #include <vector>
 #include <cstdlib>
 #include <ctime>
-#include <algorithm> // Para std::shuffle
-#include <random>    // Para std::shuffle
+#include <algorithm> // std::shuffle
+#include <random>    // std::mt19937
 #include "../include/perguntas.hpp"
 #include "../include/utils.hpp"
 
-Pergunta obterPerguntaAleatoria() {
-    std::vector<Pergunta> perguntas = {
-        {"Qual é o carro mais vendido do mundo?", {"Toyota Corolla", "Ford F-Series", "Volkswagen Golf", "Honda Civic"}, 'A'},
+// Variável global para armazenar perguntas embaralhadas
+static std::vector<Pergunta> todasPerguntas;
+static size_t indiceAtual = 0;
+
+void inicializarPerguntas() {
+    todasPerguntas = {
+{"Qual é o carro mais vendido do mundo?", {"Toyota Corolla", "Ford F-Series", "Volkswagen Golf", "Honda Civic"}, 'A'},
         {"Qual é o carro esportivo mais rápido do mundo?", {"Bugatti Chiron", "Koenigsegg Agera RS", "Hennessey Venom F5", "McLaren Speedtail"}, 'B'},
         {"Qual fabricante de automóveis é conhecido por seu logotipo de quatro anéis?", {"BMW", "Audi", "Mercedes-Benz", "Volkswagen"}, 'B'},
-        {"Qual é o nome do carro elétrico produzido pela Tesla?", {"Model S", "Model 3", "Model X", "Model Y"}, 'A'},
         {"Qual é o carro que ficou famoso por ser o 'carro do povo' na Alemanha?", {"Volkswagen Beetle", "Ford Model T", "Chevrolet Impala", "Fiat 500"}, 'A'},
         {"Qual é o nome do carro que foi o primeiro a ultrapassar 300 km/h?", {"Bugatti Veyron", "McLaren F1", "Porsche 911", "Ferrari F40"}, 'A'},
         {"Qual é o carro mais caro já vendido em um leilão?", {"Ferrari 250 GTO", "Bugatti La Voiture Noire", "Pagani Zonda", "Lamborghini Veneno"}, 'A'},
@@ -28,7 +31,7 @@ Pergunta obterPerguntaAleatoria() {
         {"Qual é a cor do Dodge Charger de Dom?", {"Preto", "Vermelho", "Azul", "Branco"}, 'A'},
         {"Qual personagem se casa com Mia?", {"Brian", "Dom", "Roman", "Tej"}, 'A'},
         {"Qual é o carro que aparece na corrida de abertura de Velocidade Furiosa 6?", {"Ford Mustang Shelby GT500", "Dodge Charger", "Toyota Supra", "Mazda RX-7"}, 'A'},
-        {"Qual personagem é conhecido pelo seu senso de ?", {"Roman", "Tej", "Brian", "Dom"}, 'A'},
+        {"Qual personagem é conhecido pelo seu senso de humor?", {"Roman", "Tej", "Brian", "Dom"}, 'A'},
         {"Qual é a primeira corrida ilegal mostrada no filme original?", {"Corrida na rua de Los Angeles", "Corrida no porto", "Corrida em Tóquio", "Corrida em Miami"}, 'A'},
         {"Quem é o líder da equipe principal em Velocidade Furiosa?", {"Dom", "Brian", "Deckard", "Roman"}, 'A'},
         {"Qual é o carro mais famoso de Dom Toretto?", {"Dodge Charger", "Toyota Supra", "Nissan Skyline", "Chevrolet Camaro"}, 'A'},
@@ -49,7 +52,7 @@ Pergunta obterPerguntaAleatoria() {
         {"Qual é o nome do spin-off focado em personagens ?", {"Hobbs & Shaw", "Fast Girls", "Velocity Women", "Fast & Fierce"}, 'A'},
         {"Em qual filme a equipe invade um trem para roubar um computador?", {"Velocidade Furiosa 7", "Velocidade Furiosa 6", "Velocidade Furiosa 5", "Velocidade Furiosa 4"}, 'B'},
         {"Que carro Letty costuma pilotar?", {"Dodge Charger", "Nissan Skyline", "Ford Mustang", "Toyota Supra"}, 'A'},
-        {"Quem é o antagonista principal de Velocidade Furiosa 8?", {"Cipher", "Deckard Shaw", "Owen Shaw", "Jakob Toretto"}, 'A'},
+        {"Quem é o inimigo principal de Velocidade Furiosa 8?", {"Cipher", "Deckard Shaw", "Owen Shaw", "Jakob Toretto"}, 'A'},
         {"Qual personagem é o irmão de Dom?", {"Jakob Toretto", "Brian", "Roman", "Tej"}, 'A'},
         {"Qual é o modelo do carro de Brian em Velocidade Furiosa 2?", {"Nissan Skyline GT-R R34", "Toyota Supra", "Mazda RX-7", "Dodge Charger"}, 'A'},
         {"Em que filme Dom rouba um tanque?", {"Velocidade Furiosa 7", "Velocidade Furiosa 5", "Velocidade Furiosa 6", "Velocidade Furiosa 8"}, 'D'},
@@ -84,25 +87,60 @@ Pergunta obterPerguntaAleatoria() {
         {"Quem é o personagem que pilota o Lykan Hypersport?", {"Dom", "Brian", "Roman", "Tej"}, 'A'}
     };
 
- // Seleciona uma pergunta aleatória
-    Pergunta p = perguntas[rand() % perguntas.size()];
+    // Embaralha todas as perguntas uma vez
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(todasPerguntas.begin(), todasPerguntas.end(), g);
+    indiceAtual = 0;
+}
 
-    // Salva o texto da resposta correta antes de embaralhar
+Pergunta obterProximaPergunta() {
+    if (indiceAtual >= todasPerguntas.size()) {
+        std::cerr << "Todas as perguntas foram utilizadas!\n";
+        exit(1); // Ou podes escolher reiniciar, etc.
+    }
+
+    Pergunta p = todasPerguntas[indiceAtual++];
+
+    // Guarda o texto da resposta correta antes de embaralhar
     std::string respostaCorretaTexto = p.opcoes[p.correta - 'A'];
 
-    // Embaralha as opções
+    // Embaralha as opções da pergunta
     std::random_device rd;
     std::mt19937 g(rd());
     std::shuffle(p.opcoes.begin(), p.opcoes.end(), g);
 
-    // Descobre a nova posição da resposta correta
+    // Descobre nova posição da resposta correta
     auto it = std::find(p.opcoes.begin(), p.opcoes.end(), respostaCorretaTexto);
     char novaLetraCorreta = 'A' + std::distance(p.opcoes.begin(), it);
-
-    // Atualiza a letra da resposta correta
     p.correta = novaLetraCorreta;
 
     return p;
 }
 
+bool fazerPergunta(const Pergunta& p) {
+    std::cout << p.texto << "\n";
+    char opc = 'A';
+    for (const auto& o : p.opcoes) {
+        std::cout << opc << ") " << o << "\n";
+        opc++;
+    }
 
+    char resposta;
+    std::cout << "Escolha uma opção: ";
+    std::cin >> resposta;
+    resposta = toupper(resposta);
+
+    if (resposta < 'A' || resposta >= 'A' + p.opcoes.size()) {
+        std::cout << "Opção inválida! Tente novamente.\n";
+        return false;
+    }
+
+    if (resposta == p.correta) {
+        std::cout << "Correto!\n";
+        return true;
+    } else {
+        std::cout << "Errado! A resposta correta era: " << p.correta << "\n";
+        return false;
+    }
+}

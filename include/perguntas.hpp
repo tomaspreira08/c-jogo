@@ -3,7 +3,6 @@
 
 #include <string>
 #include <vector>
-#include "../include/jogo.hpp"
 
 struct Pergunta {
     std::string texto;
@@ -11,6 +10,8 @@ struct Pergunta {
     char correta;
 };
 
-Pergunta obterPerguntaAleatoria();
+void inicializarPerguntas();
+Pergunta obterProximaPergunta();
+bool fazerPergunta(const Pergunta& p);
 
 #endif

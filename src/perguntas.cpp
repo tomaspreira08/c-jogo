@@ -23,7 +23,7 @@ void inicializarPerguntas() {
         {"Qual carro é conhecido como o 'muscle car' americano por excelência?", {"Ford Mustang", "Chevrolet Camaro", "Dodge Charger", "Pontiac GTO"}, 'A'},
         {"Qual é o carro que se tornou famoso por sua participação em 'Velozes e Furiosos' e é conhecido por seu motor V8?", {"Dodge Charger", "Chevrolet Camaro", "Ford Mustang", "Nissan Skyline"}, 'A'},
         {"Quem é o melhor amigo de Dom?", {"Brian", "Roman", "Tej", "Deckard"}, 'A'},
-        {"Qual é o carro icônico de Brian?", {"Toyota Supra", "Dodge Charger", "Nissan Skyline", "Ford Mustang"}, 'A'},
+        {"Qual é o carro icônico de Brian?", {"Toyota Supra", "Dodge Charger", "Nissan Skyline", "Ford Mustang"}, 'C'},
         {"Qual personagem é um ex-policial?", {"Brian", "Dom", "Roman", "Tej"}, 'A'},
         {"Qual é o carro do personagem Roman?", {"Ford Mustang", "Dodge Charger", "Toyota Supra", "Chevrolet Camaro"}, 'A'},
         {"Qual foi o primeiro filme da saga?", {"Velocidade Furiosa", "Velocidade Furiosa 2", "Velocidade Furiosa 3", "Velocidade Furiosa 4"}, 'A'},
